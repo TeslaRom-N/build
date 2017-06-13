@@ -29,6 +29,7 @@ export HMM_DESCRIPTIVE=(
 "repopick: Utility to fetch changes from Gerrit."
 "installboot: Installs a boot.img to the connected device."
 "installrecovery: Installs a recovery.img to the connected device."
+"clog:   Generate the changelog, vendor/tesla/tools/Changelog_Tesla.txt"
 )
 
 function hmm() {
@@ -2113,3 +2114,25 @@ check_bash_version && {
 }
 
 export ANDROID_BUILD_TOP=$(gettop)
+
+function clog()
+{
+    txtrst=$(tput sgr0)             #  Reset
+    bldgrn=${txtbld}$(tput setaf 2) #  green
+
+    clog_cmd=vendor/tesla/tools/changelog_tesla
+    echo ""
+    echo ${bldgrn}"Executing $clog_cmd"${txtrst}
+
+    export Changelog=Changelog_Tesla.txt
+
+    eval "$clog_cmd"
+    sed -i 's/project/   */g' $Changelog
+
+    cp $Changelog vendor/tesla/
+    rm $Changelog
+
+    echo ${bldgrn}"Changelog generated at vendor/tesla/$Changelog"${txtrst}
+
+    return;
+}
